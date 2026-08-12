@@ -31,10 +31,10 @@ jobs:
           role-to-assume: arn:aws:iam::538067616625:role/GitHubActionsTerraformRole
           aws-region: ap-south-1
 
-      # 3. Verify AWS connection
+      # 3. Verify AWS connection and credentials
       - name: Verify AWS Identity
         run: |
-          aws sts get-caller-identity
+          aws sts get-caller-identity 
 
       # 4. Install Terraform
       - name: Setup Terraform
