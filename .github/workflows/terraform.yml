@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-
   workflow_dispatch:
 
 permissions:
@@ -12,50 +11,47 @@ permissions:
   contents: read
 
 jobs:
-
   terraform:
-
     name: Terraform
     runs-on: ubuntu-latest
-
+    
     steps:
-
-      # 1. Checkout Terraform code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Configure AWS using GitHub OIDC
+      - name: Debug OIDC Claims
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Event: ${{ github.event_name }}"
+
+      - name: Wait for IAM Propagation
+        run: sleep 30
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::538067616625:role/GitHubActionsTerraformRole
           aws-region: ap-south-1
+          audience: sts.amazonaws.com
 
-      # 3. Verify AWS connection and credentials
       - name: Verify AWS Identity
         run: |
-          aws sts get-caller-identity 
+          aws sts get-caller-identity
 
-      # 4. Install Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # 5. Terraform Init
       - name: Terraform Init
         run: terraform init
 
-      # 6. Terraform Format Check
       - name: Terraform Format
         run: terraform fmt -check
 
-      # 7. Terraform Validate
       - name: Terraform Validate
         run: terraform validate
 
-      # 8. Terraform Plan
       - name: Terraform Plan
         run: terraform plan
-
-      # 9. Terraform Apply
-     # - name: Terraform Apply
-     #   run: terraform apply -auto-approve
