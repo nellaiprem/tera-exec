@@ -27,9 +27,7 @@ jobs:
           echo "Actor: ${{ github.actor }}"
           echo "Event: ${{ github.event_name }}"
 
-      - name: Wait for IAM Propagation
-        run: sleep 30
-
+  
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
